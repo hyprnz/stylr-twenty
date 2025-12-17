@@ -1,0 +1,51 @@
+{
+  "server": {
+    "image": "${SERVER_IMAGE_NAME}",
+    "ports": {
+      "3000": "HTTP"
+    },
+    "environment": {
+      "NODE_PORT": "3000",
+      "NODE_TLS_REJECT_UNAUTHORIZED": "0",
+      "PG_DATABASE_URL": "postgres://${PG_USERNAME}:${PG_PASSWORD}@${PG_HOST}:5432/${PG_DB}?sslmode=require",
+      "PG_SSL_ALLOW_SELF_SIGNED": "true",
+      "SERVER_URL": "${SERVER_URL}",
+      "REDIS_URL": "${REDIS_URL}",
+      "STORAGE_TYPE": "local",
+      "STORAGE_LOCAL_PATH": ".local-storage",
+      "APP_SECRET": "${APP_SECRET}",
+      "DB_CONNECTION_RETRY_ATTEMPTS": "10",
+      "DB_CONNECTION_RETRY_DELAY": "3000",
+      "DB_CONNECTION_TIMEOUT": "10000"
+    }
+  },
+  "worker": {
+    "image": "${SERVER_IMAGE_NAME}",
+    "command": [
+      "yarn",
+      "worker:prod"
+    ],
+    "environment": {
+      "NODE_TLS_REJECT_UNAUTHORIZED": "0",
+      "PG_DATABASE_URL": "postgres://${PG_USERNAME}:${PG_PASSWORD}@${PG_HOST}:5432/${PG_DB}?sslmode=require",
+      "PG_SSL_ALLOW_SELF_SIGNED": "true",
+      "SERVER_URL": "${SERVER_URL}",
+      "REDIS_URL": "${REDIS_URL}",
+      "DISABLE_DB_MIGRATIONS": "true",
+      "DISABLE_CRON_JOBS_REGISTRATION": "true",
+      "STORAGE_TYPE": "local",
+      "STORAGE_LOCAL_PATH": ".local-storage",
+      "APP_SECRET": "${APP_SECRET}"
+    }
+  },
+  "redis": {
+    "image": "${REDIS_IMAGE_NAME}",
+    "ports": {
+      "6379": "TCP"
+    },
+    "command": [
+      "--maxmemory-policy",
+      "noeviction"
+    ]
+  }
+}
