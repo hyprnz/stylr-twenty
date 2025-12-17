@@ -28,3 +28,14 @@ This is a fork of the original Twenty CRM repository, that we are self-hosting i
 2. Open browser to http://localhost:3000
 
 > Note: if you change the database password, you need to bring docker down and up again: `docker compose down --volumes` followed by `docker compose up -d`
+
+
+## Deploy
+
+We need to deploy all the docker containers to an existing container-service in LightSail (in AWS) called `stylr-twenty-development`.
+
+The configuration is defined in `deploy/containers.json`.
+
+```bash
+aws lightsail create-container-service-deployment --service-name stylr-twenty-development --containers file://deploy/containers.json --public-endpoint file://deploy/public-endpoint.json
+```

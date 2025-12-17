@@ -1,0 +1,12 @@
+{
+  "containerName": "server",
+  "containerPort": 3000,
+  "healthCheck": {
+    "healthyThreshold": 2,
+    "unhealthyThreshold": 2,
+    "timeoutSeconds": 5,
+    "intervalSeconds": 30,
+    "path": "/healthz",
+    "successCodes": "200-499"
+  }
+}
