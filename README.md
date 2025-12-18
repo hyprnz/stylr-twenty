@@ -42,17 +42,20 @@ PreRequisites:
 
 1. Install the ["LightSail Control" plugin](https://docs.aws.amazon.com/en_us/lightsail/latest/userguide/amazon-lightsail-install-software.html#install-software-lightsailctl)
    * You may need to restart your terminal for the `lightsailctl` command to be available
-2. Deployment configuration is defined in `deploy/containers.json`.
+2. You will need to create an S3 bucket called `stylr-twenty-development`
 3. You will need to create a `deploy/.env.local` file with the following variables:
-   * `PG_USERNAME` (username of the PostgreSQL database)
-   * `PG_PASSWORD` (password of the PostgreSQL database)
-   * `PG_HOST` (host of the PostgreSQL database, in AWS)
-   * `PG_DB` (name of the PostgreSQL database. by default should be: `stylr-twenty`)
-   * `APP_SECRET` (a random 25 character string, with no special characters )
-   * `SERVER_URL` (the full URL of the lightsail container-service)
-   * `REDIS_URL` (the URL of the redis instance, in LightSail)
+    * `PG_USERNAME` (username of the PostgreSQL database)
+    * `PG_PASSWORD` (password of the PostgreSQL database)
+    * `PG_HOST` (host of the PostgreSQL database, in AWS)
+    * `PG_DB` (name of the PostgreSQL database. by default should be: `stylr-twenty`)
+    * `APP_SECRET` (a random 25 character string, with no special characters )
+    * `SERVER_URL` (the full URL of the lightsail container-service)
+    * `REDIS_URL` (the URL of the redis instance, in LightSail)
+    * `STORAGE_S3_NAME` (name of the S3 bucket in AWS)
+    * `STORAGE_S3_ACCESS_KEY` (access key for a IAM user in AWS)
+    * `STORAGE_S3_SECRET_KEY` (secret key for a IAM user in AWS)
 
-> Note: DO NOT add the `deploy/.env.local` file to source control!
+> Note: NEVER add the `deploy/.env.local` (or the generated `deploy/containers.json`) files to source control!
 
 Execute the following commands:
 
@@ -66,16 +69,15 @@ aws lightsail push-container-image --region ap-southeast-2 --service-name stylr-
 
 Now that we have some docker images loaded into the container-service, we can create a deployment using those images, with the configuration defined in `deploy/containers.json` and `deploy/public-endpoint.json`.
 
-1. Generate the file `deploy/containers.json`:
-   1. Update the following settings in `deploy/.env.local`:
-      * `SERVER_URL` - to be the "Public domain" of the container-service
-      * `SERVER_IMAGE_NAME` - to be the name of the `server` image in the container-service
-      * `REDIS_IMAGE_NAME` - to be the name of the `redis` image in the container-service
-   2. Run the `deploy/generate-config.sh` script to produce `deploy/containers.json`. 
-2. Deploy with this command:
+1. Update the following settings in `deploy/.env.local`:
+   * `SERVER_URL` - to be the "Public domain" of the container-service
+   * `SERVER_IMAGE_NAME` - to be the name of the `server` image in the container-service
+   * `REDIS_IMAGE_NAME` - to be the name of the `redis` image in the container-service
+2. Run the `deploy/generate-config.sh` script to produce `deploy/containers.json`. 
+3. Deploy with this command:
 
 ```bash
 aws lightsail create-container-service-deployment --service-name stylr-twenty-development --containers file://deploy/containers.json --public-endpoint file://deploy/public-endpoint.json --no-cli-pager
 ```
 
-> Note: DO NOT add the `deploy/containers.json` file to source control!
+> Note: NEVER add the generated `deploy/containers.json` file to source control!
