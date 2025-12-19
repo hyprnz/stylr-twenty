@@ -54,6 +54,10 @@ PreRequisites:
     * `STORAGE_S3_NAME` (name of the S3 bucket in AWS)
     * `STORAGE_S3_ACCESS_KEY` (access key for a IAM user in AWS)
     * `STORAGE_S3_SECRET_KEY` (secret key for a IAM user in AWS)
+    * `EMAIL_SMTP_HOST` (host of the SMTP server, for SendGrid, should be `smtp.sendgrid.net`)
+    * `EMAIL_SMTP_USER` (username for the SMTP server, for SendGrid, should be `apikey`)
+    * `EMAIL_SMTP_PASSWORD` (password for the SMTP server, for SendGrid, this is an API key)
+    * `EMAIL_SMTP_SENDER_ADDRESS` (email address to send from, for SendGrid, this is a verified email address)
 
 > Note: NEVER add the `deploy/.env.local` (or the generated `deploy/containers.json`) files to source control!
 
@@ -81,3 +85,25 @@ aws lightsail create-container-service-deployment --service-name stylr-twenty-de
 ```
 
 > Note: NEVER add the generated `deploy/containers.json` file to source control!
+ 
+### Development tasks
+
+#### Change code and redeploy
+
+TBD
+
+#### Reset database
+
+Add the following `command` to the `server` element in `deploy/containers.json`:
+
+```json
+    "command": [
+      "sh", "-c",
+      "yarn && npx nx database:reset --configuration=no-seed && node dist/main"
+    ]
+```
+Then deploy to the container-service.
+
+> You should see the database script being reset when the container is started up
+
+On successful deployment, remove the `command` element from `deploy/containers.json` and deploy again.
